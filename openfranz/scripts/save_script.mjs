@@ -110,7 +110,7 @@ function main() {
       console.error("The script does not pass validation:");
       for (const problem of problems) console.error(`  - ${problem}`);
       console.error(
-        "Fix the script, or pass --no-validate for a legacy script.",
+        "Fix the script, or pass --no-validate for an older script.",
       );
       process.exit(1);
     }

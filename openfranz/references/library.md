@@ -146,7 +146,7 @@ The agent can do the common operations in one command instead of chaining search
 "$OPENFRANZ_SKILL/scripts/library_context.mjs" "curiosity gap for a launch" \
   --workspace "$OPENFRANZ_WORKSPACE" --limit 3
 
-# Read a file by its VFS path
+# Read a file by its library path
 "$OPENFRANZ_SKILL/scripts/library_read.mjs" \
   /arsenal/hooks-attention/foo.md --workspace "$OPENFRANZ_WORKSPACE"
 
@@ -212,17 +212,3 @@ The validator checks length, the H1, the source URL, at least one H2, placeholde
 - Keep one idea per file so diffs are readable.
 - Use the `Source:` line and the `Related` section to preserve provenance.
 - If the user wants a snapshot, tag the commit; do not duplicate the library into a second folder.
-
-## Migrating from the OpenFranz app
-
-The skill ships with an empty library. Importing is optional and only for users who already have an OpenFranz database.
-
-If the user has an existing OpenFranz database, export `vfs_nodes` to JSON, then import it:
-
-```bash
-node scripts/import_from_postgres.mjs --nodes nodes.json --out library
-```
-
-The import writes the Markdown files under `library/arsenal` and `library/knowledge`. Run `library_index.mjs` afterward to rebuild the links. The app's `vfs_links` can be rebuilt from the Markdown links; the index is derived data, not the source of truth.
-
-Do not attempt to migrate chats, brands, scripts, strategies, or plans unless the user asks. The skill's file formats are intentionally simpler.

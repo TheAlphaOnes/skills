@@ -1,11 +1,11 @@
 ---
 name: openfranz
-description: Run the OpenFranz creative-intelligence workflow without the app. Use this skill whenever the user wants to learn from public Instagram Reels or posts, download and process media, transcribe speech, analyze frames, build a linked Markdown knowledge library (arsenal + knowledge), extract hooks/structures/phrases/techniques, or write grounded hooks, scripts, CTAs, captions, strategies, and content plans from that library. Trigger it for requests like "ingest this reel", "build my swipe file", "learn from this creator", "write a script from my library", "make a content plan", or "act like OpenFranz", even if the user does not name OpenFranz.
+description: Run a creative-intelligence workflow for social content. Use this skill whenever the user wants to learn from public Instagram Reels or posts, download and process media, transcribe speech, analyze frames, build a linked Markdown knowledge library (arsenal + knowledge), extract hooks/structures/phrases/techniques, or write grounded hooks, scripts, CTAs, captions, strategies, and content plans from that library. Trigger it for requests like "ingest this reel", "build my swipe file", "learn from this creator", "write a script from my library", or "make a content plan".
 ---
 
 # OpenFranz
 
-OpenFranz is a creative-intelligence loop: ingest a source, extract the craft, file it into a linked library, then write from that library. This skill runs the loop with ordinary files and command-line tools, so it works in any agent environment without the OpenFranz web app, database, or worker.
+OpenFranz is a creative-intelligence loop: ingest a source, extract the craft, file it into a linked library, then write from that library. It runs on ordinary files and command-line tools, so it works in any agent environment.
 
 The library is the product. Ingest and writing exist to make the library more useful to a future writing session. Treat every step that way.
 
@@ -17,8 +17,7 @@ Use it when the user wants to:
 - build a swipe file, hook bank, or reusable content library;
 - extract hooks, structures, phrases, visual moves, or principles from a creator's work;
 - write hooks, scripts, CTAs, captions, or rewrites grounded in stored material;
-- define a brand, a content strategy, or a dated content plan;
-- replicate OpenFranz's workflow without the app.
+- define a brand, a content strategy, or a dated content plan.
 
 Public content only. Do not use it for private posts, stories, profiles, mass scraping, or anything that violates a platform's terms.
 
@@ -51,7 +50,7 @@ openfranz-workspace/
 └─ index/                      links.json and graph.json
 ```
 
-The library paths used inside documents are `/arsenal/...` and `/knowledge/...`, matching OpenFranz. The physical files are under `library/arsenal/...` and `library/knowledge/...`. The scripts translate between the two.
+The library paths used inside documents are `/arsenal/...` and `/knowledge/...`. The physical files are under `library/arsenal/...` and `library/knowledge/...`. The scripts translate between the two.
 
 ## First run
 
@@ -70,7 +69,7 @@ Setup checks for `ffmpeg`, `ffprobe`, `yt-dlp`, `node`, `python3`, and `jq`, che
 
 The scripts live next to this `SKILL.md`. If the skill is installed somewhere else, set `OPENFRANZ_SKILL` to that directory.
 
-Setup creates an empty library skeleton with a README in every folder. The agent and the user fill it from their own sources. If you already have an OpenFranz VFS export, use `scripts/import_from_postgres.mjs` to import it.
+Setup creates an empty library skeleton with a README in every folder. The agent and the user fill it from their own sources.
 
 ## Providers and keys
 
@@ -224,7 +223,7 @@ These are the rules that keep the library worth using. Follow them even when the
 | `scripts/transcribe_sarvam.mjs <audio> <out.json> <duration>` | Sarvam REST or batch transcription |
 | `scripts/frame_plan.mjs --transcript <json> --duration <sec> --max 24 --out <json>` | Plan frame timestamps |
 | `scripts/library_context.mjs <query> --workspace DIR [--focus both\|arsenal\|knowledge] [--limit 3]` | Search and read the strongest files in one call |
-| `scripts/library_read.mjs <path> --workspace DIR [--list]` | Read or list library files by VFS path |
+| `scripts/library_read.mjs <path> --workspace DIR [--list]` | Read or list library files by path |
 | `scripts/library_write.mjs --workspace DIR --path /arsenal/... --content-file FILE --source URL` | Validate, write, and reindex in one call |
 | `scripts/library_index.mjs --workspace DIR` | Rebuild `index/links.json` and `index/graph.json` |
 | `scripts/library_search.mjs <query> --workspace DIR [--limit 20] [--content]` | Fuzzy path and content search |
@@ -238,7 +237,6 @@ These are the rules that keep the library worth using. Follow them even when the
 | `scripts/plan.mjs list\|add\|update\|delete --workspace DIR ...` | Manage the dated content plan |
 | `scripts/brand.mjs list\|read\|create\|update ... --workspace DIR` | Manage brand files |
 | `scripts/strategy.mjs list\|read\|create\|update\|activate ... --workspace DIR` | Manage strategies |
-| `scripts/import_from_postgres.mjs --nodes nodes.json --out library` | Import an existing VFS export into a local library |
 | `scripts/make_sample.sh [out.mp4]` | Generate a small sample Reel for testing |
 
 ## References
@@ -253,27 +251,16 @@ Read the reference that matches the task. Do not load all of them at once.
 | `references/media.md` | Downloading, transcribing, extracting frames, or troubleshooting media |
 | `references/domains.md` | Brands, scripts, strategies, plans, and their file formats |
 
-## What is different from the app
+## Quality bar
 
-The skill preserves the app's contracts, not its infrastructure:
-
-| App | Skill |
-|-----|-------|
-| PostgreSQL VFS (`vfs_nodes`, `vfs_links`) | Markdown files under `library/` plus `index/links.json` |
-| Postgres queue and Render worker | Synchronous `ingest.sh`; long jobs run in the agent's shell |
-| Sarvam `saaras:v3` | Local Whisper by default; Sarvam when `SARVAM_API_KEY` is set |
-| Eve agent with 25 tools | The agent's own file, shell, web, and image tools plus the scripts here |
-| Better Auth and a shared workspace | The local filesystem and the user's own permissions |
-| Brands, scripts, strategies, plans in Postgres | Markdown and JSON files under the workspace |
-
-The quality bar is the same: evidence, provenance, dedupe, links, three variants, and brand grounding.
+Evidence, provenance, dedupe, links, three variants, and brand grounding.
 
 ## Troubleshooting
 
 - **`yt-dlp` cannot download an Instagram URL.** Confirm the post is public and the URL is a post or Reel, not a profile or story. Try `yt-dlp --cookies-from-browser safari "<url>"` if the user is logged in and the content is public but age-gated. Do not use cookies to access private content.
 - **No audio or empty transcript.** Check `ffprobe` for an audio stream. Some Reels are music-only; transcribe what is there and rely on the frames. If the audio is silent, say so in the document.
 - **Whisper is slow or missing.** The first run downloads the model. Use `--model openai/whisper-base` for speed, or `--stt sarvam` with a key. If `transformers` or `torch` is missing, install them with `pip3 install transformers torch`.
-- **Frames are too dark or blurry.** The app's frame planner samples one frame every two seconds, with a minimum of six and a maximum of 24. Increase `--max-frames` for long, visually dense Reels.
+- **Frames are too dark or blurry.** The frame planner samples one frame every two seconds, with a minimum of six and a maximum of 24. Increase `--max-frames` for long, visually dense Reels.
 - **The library search misses a synonym.** Search is lexical and fuzzy, not semantic. Try the creator's exact phrase, the technique name, and the audience problem as separate searches.
 - **A document fails validation.** Read the printed problems. The usual causes are a missing `Source:` line, a missing `##` section, a thin body under 300 characters, or a link to a file that does not exist.
 

@@ -1,6 +1,6 @@
 # Domains: brands, scripts, strategies, and plans
 
-The library is the research surface. These four domains are the working surface around it. They are plain files so the agent can read and edit them without a database.
+The library is the research surface. These four domains are the working surface around it. They are plain files so the agent can read and edit them directly.
 
 ## Brands
 
@@ -134,7 +134,7 @@ Rules:
 - The script content is the same Markdown that appeared inside the `script` fence, including the fence.
 - To restore an old version, read it and save it as a new version with the note `Restored from vN.`.
 
-`save_script.mjs` validates the script contract before writing. Use `validate_script.mjs` to check a script without saving it. Use `--no-validate` only for legacy scripts.
+`save_script.mjs` validates the script contract before writing. Use `validate_script.mjs` to check a script without saving it. Use `--no-validate` only for older scripts.
 
 Commands:
 

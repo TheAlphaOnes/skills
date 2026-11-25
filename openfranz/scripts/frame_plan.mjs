@@ -2,7 +2,7 @@
 /**
  * Plan frame timestamps for a Reel.
  *
- * Port of OpenFranz's frameTarget and selectFrameTimes:
+ * Uses frameTarget and selectFrameTimes:
  * roughly one frame every two seconds, at least six, at most the cap,
  * anchored to a scene cut, then a speech midpoint, then the slot centre.
  *

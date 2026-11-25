@@ -6,7 +6,7 @@ Usage:
     --model openai/whisper-base --language en
 
 The output is JSON with a full transcript and timestamped segments, matching
-the shape the OpenFranz ingestion workflow expects.
+the shape the ingestion workflow expects.
 """
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
 /**
  * Gather the strongest library material for a writing task in one call.
  *
- * This is the skill's equivalent of OpenFranz's library_context tool: it
+ * This is the one-call context helper: it
  * tokenizes the query, scores files by how many query tokens they match,
  * reads the top files, and returns their content.
  *

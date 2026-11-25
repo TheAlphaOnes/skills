@@ -1,6 +1,6 @@
 # Media: download, transcribe, and sample frames
 
-This reference covers everything between a source URL and a `context.md` the agent can analyze. The scripts implement the same limits and frame logic as the OpenFranz worker, using standard command-line tools.
+This reference covers everything between a source URL and a `context.md` the agent can analyze. The scripts implement these limits and frame logic with standard command-line tools.
 
 ## Supported sources
 
@@ -50,7 +50,7 @@ If `yt-dlp` fails:
 
 ### Optional metadata fallback
 
-The OpenFranz app uses `@jerrycoder/instagram-api` to get media URLs. The skill does not require it. If `yt-dlp` cannot enumerate a carousel, install the package in a scratch directory and use it:
+If `yt-dlp` cannot enumerate a carousel, install `@jerrycoder/instagram-api` in a scratch directory and use it:
 
 ```bash
 mkdir -p /tmp/openfranz-media && cd /tmp/openfranz-media
@@ -163,7 +163,7 @@ If the machine has no PyTorch build, use Sarvam instead.
 
 ### Sarvam
 
-`transcribe_sarvam.mjs` mirrors the app:
+`transcribe_sarvam.mjs` uses the Sarvam API:
 
 - Clips of 30 seconds or less use `POST /speech-to-text` with `saaras:v3`, `with_timestamps=true`, and `language_code=en-IN`.
 - Longer clips use the batch job API: create, upload, start, poll every 5 seconds for up to 10 minutes, download, and parse.
@@ -174,7 +174,7 @@ Sarvam is the better choice for Indic languages and for long Reels. Local Whispe
 
 ## Frame planning
 
-The frame planner is a direct port of the app's `frameTarget` and `selectFrameTimes`:
+The frame planner uses `frameTarget` and `selectFrameTimes`:
 
 - Roughly one frame every two seconds.
 - At least six frames, unless the cap is lower.
@@ -233,7 +233,7 @@ Use local by default. Do not ask for a key unless the user explicitly asks for a
 | Sarvam REST threshold | 30 seconds |
 | Sarvam batch poll | 120 attempts x 5 seconds |
 
-These match the app's worker. The skill does not enforce the video size cap during `yt-dlp` download; check the file size before processing and stop if it is over 100 MB.
+The skill does not enforce the video size cap during `yt-dlp` download; check the file size before processing and stop if it is over 100 MB.
 
 ## Troubleshooting
 

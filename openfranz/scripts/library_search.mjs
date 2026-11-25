@@ -15,7 +15,7 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { buildIndex } from "./library_index.mjs";
 import {
-  normalizeVfsPath,
+  normalizeLibraryPath,
   physicalPath,
   readJson,
 } from "./lib.mjs";
@@ -106,7 +106,7 @@ function normalizeQueryPath(value) {
   if (!path) return "/";
   if (path.startsWith("library/")) path = path.slice("library".length);
   if (!path.startsWith("/")) path = `/${path}`;
-  return normalizeVfsPath(path);
+  return normalizeLibraryPath(path);
 }
 
 function search(args, index) {

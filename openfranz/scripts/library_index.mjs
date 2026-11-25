@@ -20,7 +20,7 @@ import {
   physicalPath,
   resolveLink,
   titleOf,
-  toVfsPath,
+  toLibraryPath,
   walkMarkdown,
 } from "./lib.mjs";
 
@@ -32,30 +32,30 @@ export function buildIndex(workspace) {
   const missing = [];
 
   for (const file of files) {
-    const vfsPath = toVfsPath(file, workspace);
-    if (!vfsPath) continue;
+    const libraryPath = toLibraryPath(file, workspace);
+    if (!libraryPath) continue;
 
     const content = readFileSync(file, "utf8");
     const stat = fileStat(file);
     nodes.push({
-      path: vfsPath,
-      title: titleOf(content, vfsPath),
+      path: libraryPath,
+      title: titleOf(content, libraryPath),
       updatedAt: stat ? stat.mtime.toISOString() : null,
       size: stat ? stat.size : content.length,
     });
 
     for (const link of extractLinks(content)) {
-      const target = resolveLink(vfsPath, link.target);
+      const target = resolveLink(libraryPath, link.target);
       if (!target) continue;
-      links.push({ source: vfsPath, target, kind: link.kind });
+      links.push({ source: libraryPath, target, kind: link.kind });
       if (!existsSync(physicalPath(target, workspace))) {
-        missing.push({ source: vfsPath, target });
+        missing.push({ source: libraryPath, target });
       }
     }
   }
 
   // One edge per source/target pair. Markdown wins when both syntaxes appear,
-  // matching the app's last-write-wins behavior.
+  // and the last write wins.
   const edgeMap = new Map();
   for (const link of links) {
     edgeMap.set(`${link.source}\0${link.target}`, link);

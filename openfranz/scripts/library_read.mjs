@@ -10,10 +10,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
-  normalizeVfsPath,
+  normalizeLibraryPath,
   physicalPath,
   titleOf,
-  toVfsPath,
+  toLibraryPath,
   walkMarkdown,
 } from "./lib.mjs";
 
@@ -43,17 +43,17 @@ function parseArgs(argv) {
 
 function main() {
   const args = parseArgs(process.argv.slice(2));
-  const path = normalizeVfsPath(args.path);
+  const path = normalizeLibraryPath(args.path);
   const isList = args.list || args.path.endsWith("/") || path === "/";
 
   if (isList) {
     const prefix = path === "/" ? "/" : `${path.replace(/\/$/, "")}/`;
     const nodes = walkMarkdown(resolve(args.workspace, "library"))
       .map((file) => {
-        const vfsPath = toVfsPath(file, args.workspace);
-        if (!vfsPath) return null;
+        const libraryPath = toLibraryPath(file, args.workspace);
+        if (!libraryPath) return null;
         const content = readFileSync(file, "utf8");
-        return { path: vfsPath, title: titleOf(content, vfsPath) };
+        return { path: libraryPath, title: titleOf(content, libraryPath) };
       })
       .filter(Boolean)
       .filter((node) => node.path.startsWith(prefix))

@@ -159,7 +159,7 @@ The script library is a separate store from the library filesystem. It holds fin
 - To add a version to an existing script, pass `--id-or-slug`. Call `save_script.mjs list` first if you need to find it.
 - Never claim a script was saved unless the command returned a version.
 
-`save_script.mjs` validates the script before writing: one `script` fence with a title, exactly three variants, an `**Angle:**` line, at least three beats per variant in the exact format, and a `**Why it works:**` line. Use `--no-validate` only for a legacy script that predates this contract.
+`save_script.mjs` validates the script before writing: one `script` fence with a title, exactly three variants, an `**Angle:**` line, at least three beats per variant in the exact format, and a `**Why it works:**` line. Use `--no-validate` only for an older script that predates this contract.
 
 ```bash
 "$OPENFRANZ_SKILL/scripts/validate_script.mjs" /tmp/script.md

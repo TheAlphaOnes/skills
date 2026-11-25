@@ -2,7 +2,7 @@
 /**
  * Validate an OpenFranz library document.
  *
- * Checks the same shape as the app's ingestion validator, plus link targets:
+ * Checks the document shape plus link targets:
  * 300-6000 characters, an H1, the exact source URL, at least one H2, no
  * placeholder text, and every internal link resolving to an existing file.
  *
@@ -40,7 +40,7 @@ function parseArgs(argv) {
   return args;
 }
 
-function normalizeVfsPath(input) {
+function normalizeLibraryPath(input) {
   if (typeof input !== "string") throw new Error("A path must be a string.");
   if (input.includes("\0")) throw new Error("Paths cannot contain null bytes.");
   const segments = input.replace(/\\/g, "/").split("/");
@@ -60,15 +60,15 @@ function normalizeVfsPath(input) {
   return path;
 }
 
-function parentVfsPath(input) {
-  const path = normalizeVfsPath(input);
+function parentLibraryPath(input) {
+  const path = normalizeLibraryPath(input);
   if (path === "/") return "/";
   const separator = path.lastIndexOf("/");
   return separator <= 0 ? "/" : path.slice(0, separator);
 }
 
-function joinVfsPath(parent, child) {
-  return normalizeVfsPath(`${normalizeVfsPath(parent)}/${child}`);
+function joinLibraryPath(parent, child) {
+  return normalizeLibraryPath(`${normalizeLibraryPath(parent)}/${child}`);
 }
 
 function isExternalTarget(target) {
@@ -106,23 +106,23 @@ function resolveLink(sourcePath, target) {
     decoded = withoutFragment;
   }
   return decoded.startsWith("/")
-    ? normalizeVfsPath(decoded)
-    : joinVfsPath(parentVfsPath(sourcePath), decoded);
+    ? normalizeLibraryPath(decoded)
+    : joinLibraryPath(parentLibraryPath(sourcePath), decoded);
 }
 
-function toVfsPath(file, workspace) {
+function toLibraryPath(file, workspace) {
   const libraryRoot = resolve(workspace, "library");
   const absolute = resolve(file);
   const rel = relative(libraryRoot, absolute).replace(/\\/g, "/");
   if (rel.startsWith("..")) return null;
-  return normalizeVfsPath(`/${rel}`);
+  return normalizeLibraryPath(`/${rel}`);
 }
 
-function physicalPath(vfsPath, workspace) {
-  return join(resolve(workspace, "library"), vfsPath.replace(/^\//, ""));
+function physicalPath(libraryPath, workspace) {
+  return join(resolve(workspace, "library"), libraryPath.replace(/^\//, ""));
 }
 
-export function validateDocument(content, sourceUrl, vfsPath, workspace) {
+export function validateDocument(content, sourceUrl, libraryPath, workspace) {
   const problems = [];
   const trimmed = content.trim();
 
@@ -151,23 +151,23 @@ export function validateDocument(content, sourceUrl, vfsPath, workspace) {
   if (/\b(to be created|TBD|TODO|lorem ipsum)\b/i.test(trimmed)) {
     problems.push("Remove placeholder text before writing.");
   }
-  if (!vfsPath) {
+  if (!libraryPath) {
     problems.push(
       "The document must live under library/arsenal/ or library/knowledge/.",
     );
-  } else if (!vfsPath.endsWith(".md")) {
+  } else if (!libraryPath.endsWith(".md")) {
     problems.push("The document must be a .md file.");
   } else if (
-    !vfsPath.startsWith("/arsenal/") &&
-    !vfsPath.startsWith("/knowledge/")
+    !libraryPath.startsWith("/arsenal/") &&
+    !libraryPath.startsWith("/knowledge/")
   ) {
     problems.push("The document must be under /arsenal/ or /knowledge/.");
   }
 
-  if (vfsPath) {
+  if (libraryPath) {
     const missing = [];
     for (const link of extractLinks(trimmed)) {
-      const target = resolveLink(vfsPath, link.target);
+      const target = resolveLink(libraryPath, link.target);
       if (!target) continue;
       if (!existsSync(physicalPath(target, workspace))) {
         missing.push(target);
@@ -184,11 +184,11 @@ export function validateDocument(content, sourceUrl, vfsPath, workspace) {
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const content = readFileSync(args.file, "utf8");
-  const vfsPath = toVfsPath(args.file, args.workspace);
-  const problems = validateDocument(content, args.source, vfsPath, args.workspace);
+  const libraryPath = toLibraryPath(args.file, args.workspace);
+  const problems = validateDocument(content, args.source, libraryPath, args.workspace);
 
   if (problems.length === 0) {
-    console.log(`OK ${args.file}${vfsPath ? ` (${vfsPath})` : ""}`);
+    console.log(`OK ${args.file}${libraryPath ? ` (${libraryPath})` : ""}`);
     return;
   }
 

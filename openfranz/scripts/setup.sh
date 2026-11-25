@@ -62,8 +62,7 @@ mkdir -p \
   "$WORKSPACE/index"
 
 # The library starts empty. The agent and the user fill it from their own
-# sources. Use scripts/import_from_postgres.mjs if you already have a VFS
-# export to import.
+# sources.
 
 ensure_readme() {
   local dir="$1"

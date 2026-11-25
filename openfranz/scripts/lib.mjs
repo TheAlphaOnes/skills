@@ -1,9 +1,8 @@
 /**
  * Shared helpers for the OpenFranz library scripts.
  *
- * The path and link rules are ports of the app's shared/utils/vfs-path.ts and
- * shared/utils/vfs-links.ts. Keeping them in one place means the index, the
- * search, and the validator agree on what a path and a link mean.
+ * The path and link rules live in one place so the index, the search, and the
+ * validator agree on what a path and a link mean.
  */
 
 import {
@@ -18,7 +17,7 @@ import { basename, join, relative, resolve } from "node:path";
 
 export const MAX_PATH_LENGTH = 1024;
 
-export function normalizeVfsPath(input) {
+export function normalizeLibraryPath(input) {
   if (typeof input !== "string") {
     throw new Error("A filesystem path must be a string.");
   }
@@ -44,15 +43,15 @@ export function normalizeVfsPath(input) {
   return path;
 }
 
-export function parentVfsPath(input) {
-  const path = normalizeVfsPath(input);
+export function parentLibraryPath(input) {
+  const path = normalizeLibraryPath(input);
   if (path === "/") return "/";
   const separator = path.lastIndexOf("/");
   return separator <= 0 ? "/" : path.slice(0, separator);
 }
 
-export function joinVfsPath(parent, child) {
-  return normalizeVfsPath(`${normalizeVfsPath(parent)}/${child}`);
+export function joinLibraryPath(parent, child) {
+  return normalizeLibraryPath(`${normalizeLibraryPath(parent)}/${child}`);
 }
 
 export function isExternalTarget(target) {
@@ -93,20 +92,20 @@ export function resolveLink(sourcePath, target) {
   }
 
   return decoded.startsWith("/")
-    ? normalizeVfsPath(decoded)
-    : joinVfsPath(parentVfsPath(sourcePath), decoded);
+    ? normalizeLibraryPath(decoded)
+    : joinLibraryPath(parentLibraryPath(sourcePath), decoded);
 }
 
-export function toVfsPath(file, workspace) {
+export function toLibraryPath(file, workspace) {
   const libraryRoot = resolve(workspace, "library");
   const absolute = resolve(file);
   const rel = relative(libraryRoot, absolute).replace(/\\/g, "/");
   if (rel.startsWith("..")) return null;
-  return normalizeVfsPath(`/${rel}`);
+  return normalizeLibraryPath(`/${rel}`);
 }
 
-export function physicalPath(vfsPath, workspace) {
-  return join(resolve(workspace, "library"), vfsPath.replace(/^\//, ""));
+export function physicalPath(libraryPath, workspace) {
+  return join(resolve(workspace, "library"), libraryPath.replace(/^\//, ""));
 }
 
 export function walkMarkdown(root) {

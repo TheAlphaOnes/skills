@@ -2,7 +2,7 @@
 /**
  * Transcribe audio with Sarvam saaras:v3.
  *
- * Mirrors the OpenFranz worker: clips of 30 seconds or less use the REST
+ * Clips of 30 seconds or less use the REST
  * endpoint; longer clips use the batch job API. Requires SARVAM_API_KEY.
  *
  * Usage:

@@ -19,7 +19,7 @@ import {
 import { dirname, resolve } from "node:path";
 import { buildIndex } from "./library_index.mjs";
 import { validateDocument } from "./validate_document.mjs";
-import { normalizeVfsPath, physicalPath } from "./lib.mjs";
+import { normalizeLibraryPath, physicalPath } from "./lib.mjs";
 
 function parseArgs(argv) {
   const args = { json: false, index: true };
@@ -51,7 +51,7 @@ function parseArgs(argv) {
 
 function main() {
   const args = parseArgs(process.argv.slice(2));
-  const path = normalizeVfsPath(args.path);
+  const path = normalizeLibraryPath(args.path);
 
   if (!path.endsWith(".md")) {
     throw new Error("The path must end with .md");
