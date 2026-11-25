@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "id": "00000000-0000-4000-8000-000000000000",
+      "title": "<what the piece of content is>",
+      "platform": "instagram",
+      "format": "reel",
+      "brand": "<brand-slug>",
+      "date": "2026-12-01",
+      "time": "19:00",
+      "status": "planned",
+      "rationale": "<why this day and slot work>",
+      "scriptId": null
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "skill_name": "openfranz",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I saved a 12-second reel at /tmp/openfranz-eval/sample-reel.mp4. Ingest it into my OpenFranz workspace at /tmp/openfranz-eval/workspace and file whatever is genuinely reusable. Don't invent anything the reel doesn't show or say.",
+      "expected_output": "A context.md with the transcript and frames, a visual analysis, and 0-3 validated library documents with source and links.",
+      "files": [],
+      "expectations": [
+        "The ingest produced inbox/<id>/context.md",
+        "The agent viewed the frames or stated it could not",
+        "Every library document includes the source path or URL",
+        "Every library document passes validate_document.mjs",
+        "The library index was rebuilt"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use my OpenFranz library at /tmp/openfranz-eval/workspace to write three hooks for a cold brew launch reel for Acme Coffee. Read the brand file and the library first, and tell me which files you used.",
+      "expected_output": "Three hooks with different angles, a mechanism line for each, and a Library: line naming the files used.",
+      "files": [],
+      "expectations": [
+        "The agent read brands/acme-coffee.md",
+        "The agent searched the library at least twice",
+        "The answer has exactly three hooks",
+        "Each hook names a different mechanism",
+        "The answer ends with a Library: line"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Turn the active strategy in /tmp/openfranz-eval/workspace into a two-week content plan. Check what is already scheduled first, and save the items so I can see them with plan.mjs list.",
+      "expected_output": "A plan that follows the active strategy, avoids double-booking, and has valid dates, platforms, formats, and rationales.",
+      "files": [],
+      "expectations": [
+        "The agent read the active strategy",
+        "The agent listed the existing plan before adding",
+        "Every item has a real YYYY-MM-DD date",
+        "Every item has a platform, format, and rationale",
+        "plan.mjs list shows the new items"
+      ]
+    }
+  ]
+}
